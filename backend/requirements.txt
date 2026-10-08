@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+motor
+xgboost
+lightgbm
+pandas
+scikit-learn
+scapy
+opencv-python
+torch
+torchvision
+google-generativeai
+python-multipart
+python-jose
+passlib
+bcrypt
+tldextract

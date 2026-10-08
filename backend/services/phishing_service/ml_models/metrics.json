@@ -1,0 +1,56 @@
+{
+    "XGBoost": {
+        "Accuracy": 0.9692,
+        "Precision": 0.9754,
+        "Recall": 0.9529,
+        "F1 Score": 0.964,
+        "Specificity": 0.9817,
+        "False Positive Rate": 0.0183,
+        "False Negative Rate": 0.0471,
+        "ROC-AUC": 0.9961,
+        "Confusion Matrix": {
+            "TN": 1232,
+            "FP": 23,
+            "FN": 45,
+            "TP": 911
+        },
+        "Inference Time (ms/sample)": 0.0109,
+        "Model Size (MB)": 0.5831
+    },
+    "LightGBM": {
+        "Accuracy": 0.9697,
+        "Precision": 0.9744,
+        "Recall": 0.955,
+        "F1 Score": 0.9646,
+        "Specificity": 0.9809,
+        "False Positive Rate": 0.0191,
+        "False Negative Rate": 0.045,
+        "ROC-AUC": 0.9963,
+        "Confusion Matrix": {
+            "TN": 1231,
+            "FP": 24,
+            "FN": 43,
+            "TP": 913
+        },
+        "Inference Time (ms/sample)": 0.0124,
+        "Model Size (MB)": 0.6825
+    },
+    "Random Forest": {
+        "Accuracy": 0.967,
+        "Precision": 0.9742,
+        "Recall": 0.9487,
+        "F1 Score": 0.9613,
+        "Specificity": 0.9809,
+        "False Positive Rate": 0.0191,
+        "False Negative Rate": 0.0513,
+        "ROC-AUC": 0.9962,
+        "Confusion Matrix": {
+            "TN": 1231,
+            "FP": 24,
+            "FN": 49,
+            "TP": 907
+        },
+        "Inference Time (ms/sample)": 0.0775,
+        "Model Size (MB)": 14.7202
+    }
+}

@@ -1,1 +1,0 @@
-"""Deepfake media signal checks."""
