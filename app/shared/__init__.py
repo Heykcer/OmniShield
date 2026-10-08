@@ -1,0 +1,1 @@
+"""Cross-module scoring and explanation helpers."""
