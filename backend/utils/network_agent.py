@@ -2,8 +2,22 @@ from collections import OrderedDict, deque
 from threading import Lock
 from time import monotonic
 
-from app.schemas import ATOSignalRequest, Indicator
+from typing import Annotated
+from pydantic import BaseModel, Field, StringConstraints
 
+ShortText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=256)]
+
+class ATOSignalRequest(BaseModel):
+    username: ShortText
+    failed_attempts: int = Field(ge=0, le=100)
+    ip_address: str | None = Field(default=None, max_length=64)
+    user_agent: str | None = Field(default=None, max_length=512)
+    country: str | None = Field(default=None, min_length=2, max_length=2)
+
+class Indicator(BaseModel):
+    code: str
+    detail: str
+    contribution: int = Field(ge=0, le=100)
 WINDOW_SECONDS = 300
 MAX_USERS = 10_000
 _events: OrderedDict[str, deque[tuple[float, str | None, str | None, str | None]]] = OrderedDict()
