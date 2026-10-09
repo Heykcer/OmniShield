@@ -36,6 +36,8 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Analytics', path: '/analytics' },
+    { name: 'B2B API', path: '/b2b-analytics' },
+    { name: 'API Docs', path: '/developers' },
     { name: 'Reports', path: '/reports' },
     { name: 'Services', path: '/services' },
     { name: 'Pricing', path: '/pricing' }

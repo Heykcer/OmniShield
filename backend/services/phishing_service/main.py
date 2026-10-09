@@ -119,7 +119,7 @@ async def check_phishing(req: PhishingRequest):
     explanation = ""
     if GENAI_API_KEY:
         try:
-            model = genai.GenerativeModel("gemini-1.5-flash")
+            model = genai.GenerativeModel("gemini-pro")
             prompt = (
                 f"You are a cybersecurity expert. Our {model_name} model analyzed this URL: {req.url} "
                 f"and gave it a phishing risk score of {risk_score*100:.1f}%. "

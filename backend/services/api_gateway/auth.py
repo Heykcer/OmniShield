@@ -3,8 +3,10 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, APIKeyHeader
 import jwt
+import secrets
+from database.mongo import api_keys_collection
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
@@ -86,3 +88,19 @@ async def get_optional_user(credentials: Optional[HTTPAuthorizationCredentials] 
     except Exception:
         pass
     return {"username": "anonymous"}
+
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+async def get_user_from_api_key(api_key: str = Depends(api_key_header)):
+    if not api_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing API Key in headers (X-API-Key)",
+        )
+    key_doc = await api_keys_collection.find_one({"api_key": api_key})
+    if not key_doc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API Key",
+        )
+    return {"username": key_doc["username"], "is_api_key": True}

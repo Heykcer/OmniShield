@@ -14,6 +14,7 @@ db = client.omnishield
 users_collection = db.users
 threat_logs_collection = db.threat_logs
 reports_collection = db.reports
+api_keys_collection = db.api_keys
 
 async def init_db():
     """
@@ -22,6 +23,7 @@ async def init_db():
     """
     # Ensure usernames are unique
     await users_collection.create_index("username", unique=True)
+    await api_keys_collection.create_index("api_key", unique=True)
     
     # Indexes for querying threat logs
     await threat_logs_collection.create_index("user_id")

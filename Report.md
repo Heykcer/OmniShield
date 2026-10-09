@@ -50,9 +50,9 @@ To ensure **Data Privacy**, the platform analyzes data strictly in-memory. Video
 
 ---
 
-## 3. The Three Core Security Tools (Our Prototype)
+## 3. The Core Security Tools (Our Prototype)
 
-To effectively secure both the human and technology layers, our prototype is divided into three highly feasible, specialized tools, which feed into one centralized Cybersecurity Command Dashboard.
+To effectively secure both the human and technology layers, our prototype is divided into highly specialized tools, which feed into one centralized Cybersecurity Command Dashboard.
 
 ### Tool 1: AI-Powered Phishing & Social Engineering Engine
 *   **The Scenario Addressed:** Combats the Fake Shopping Site targeting students and credential harvesting campaigns.
@@ -69,13 +69,13 @@ To effectively secure both the human and technology layers, our prototype is div
     |    on Dashboard   |      |    ThreatLog DB   |      |    Generates XAI  |
     +-------------------+      +-------------------+      +-------------------+
     ```
-*   **Algorithm & Models:** Based on our literature survey (e.g., 2026 IEEE Access study on X-PHIDE), we use **XGBoost, LightGBM, and Random Forest** to mathematically classify extracted URL features (domain length, entropy, special characters). Once the ML model flags it as a threat, we pass the context to the **Google Gemini API** to generate the plain English "Explainable AI (XAI)" summary for the user.
+*   **Algorithm & Models:** Our implementation extracts 14 specific lexical features from raw URLs using Python's `tldextract` (e.g., domain length, subdomain counts, Shannon entropy, and suspicious character ratios). Users can dynamically select between three pre-trained models—**XGBoost**, **LightGBM**, or **Random Forest** (loaded via `joblib`)—to calculate the phishing probability score. Once the structural ML model flags the URL as a threat based on these features, the exact risk vectors are passed to the **Google Gemini API** to generate a plain English "Explainable AI (XAI)" forensic summary for the user.
 *   **Datasets for Training:** PhishTank, OpenPhish, GramBeddings, and PhiUSIIL (Cross-dataset validation).
-*   **Tech Stack:** Python, FastAPI, Scikit-Learn, XGBoost, LightGBM, Google Gemini SDK (for XAI).
+*   **Tech Stack:** Python, FastAPI, Scikit-Learn (`joblib`), XGBoost, LightGBM, `tldextract`, Google Gemini SDK (for XAI).
 
-### Tool 2: Deepfake & Digital Impersonation Detector
+### Tool 2: Deepfake & Digital Impersonation Detector (MesoNet PyTorch CNN)
 *   **The Scenario Addressed:** Prevents the AI Voice Clone "Grandparent Scam", celebrity deepfakes, and the $25 million deepfake video call scam.
-*   **How the Solution Works:** Users upload questionable video or audio clips to the dashboard. The tool calculates an authenticity/confidence score (Safe → Critical) and visually highlights where the media was manipulated.
+*   **How the Solution Works:** Users upload questionable video files to the dashboard. The tool performs pixel-by-pixel spatial analysis to calculate an authenticity/confidence score (Safe → Critical) and flags forensic artifacts, supplemented by a Gemini XAI summary.
     ```text
     +-------------------+      +-------------------+      +-------------------+
     | 1. Upload .mp4    | ---> | 2. Load to RAM    | ---> | 3. OpenCV Extract |
@@ -85,12 +85,12 @@ To effectively secure both the human and technology layers, our prototype is div
                                                                    v
     +-------------------+      +-------------------+      +-------------------+
     | 6. Flag Threat    | <--- | 5. Average Score  | <--- | 4. PyTorch CNN    |
-    |    & Delete File  |      |    Across Frames  |      |    (Facenet)      |
+    |    & Delete File  |      |    Across Frames  |      |    (Meso4.pth)    |
     +-------------------+      +-------------------+      +-------------------+
     ```
-*   **Algorithm & Models:** Real-time 60fps video analysis is rarely feasible for a hackathon. Instead, our prototype uses **Keyframe Extraction** via OpenCV, pulling 1 frame per second. These frames are passed through pre-trained PyTorch models (like Facenet-PyTorch or Timm) to detect spatial inconsistencies (skin smoothing, unnatural blinking). For audio, we extract Mel-Frequency Cepstral Coefficients (MFCCs) using Librosa and classify them.
-*   **Datasets for Reference:** FaceForensics++ (for video models) and ASVspoof (for audio cloning).
-*   **Tech Stack:** PyTorch, Torchvision, OpenCV (for frame extraction), Librosa (audio processing).
+*   **Algorithm & Models:** Our prototype runs deepfake detection directly on raw pixels. We extract keyframes using OpenCV, resize them to 256x256, and transform them into tensor arrays. These are passed through a custom **MesoNet-4 (Meso4) Architecture** implemented in PyTorch. The CNN utilizes 4 Convolutional layers to focus specifically on "mesoscopic" properties (microscopic noise residuals and latent space blurring) rather than macroscopic facial recognition. The network's pre-trained weights are loaded directly into RAM from a `.pth` checkpoint file to calculate precise probability scores.
+*   **Datasets for Reference:** FaceForensics++ (for video models).
+*   **Tech Stack:** PyTorch (torch, torchvision, nn.Module), OpenCV (for frame extraction), Google Gemini SDK (for XAI summarization).
 
 ### Tool 3: Behavioral Anomaly & Threat Detector
 *   **The Scenario Addressed:** Stops Institutions from falling victim to credential stuffing bots, and detects the abnormal behavior caused by Modded APKs stealing OTPs.
@@ -112,10 +112,20 @@ To effectively secure both the human and technology layers, our prototype is div
 *   **Datasets for Reference:** KDD Cup 99 and CICIDS2017.
 *   **Tech Stack:** Scikit-learn, SQLite, Python, Scapy (for packet manipulation), Npcap/libpcap.
 
-### Tool 4: Global Analytics Command Center (Dashboard)
+### Tool 4: B2B API Integration & External Telemetry Engine
+*   **The Scenario Addressed:** Software companies, e-commerce platforms, and external developers need to integrate intelligent threat detection directly into their own codebases without building ML models from scratch.
+*   **How the Solution Works:** We implemented a scalable API Gateway. Developers generate an `X-API-Key` from their OmniShield Profile and use it to securely authenticate against our REST APIs. They can embed a script snippet (Node.js, Python, or cURL) into their middleware to forward network metadata directly to our `/api/external/v1/telemetry` endpoint.
+*   **Threat Vector Analysis:** The telemetry engine intercepts the incoming HTTP requests and instantaneously evaluates 4 core threat vectors:
+    1. **API Abuse / DDoS:** Calculates `request_rate` spikes (e.g., >1000 requests/min).
+    2. **Data Exfiltration:** Monitors massive outgoing `payload_size` transfers from critical endpoints (e.g., pulling a 60MB database dump).
+    3. **Insider Threats:** Identifies unauthorized structural access attempts based on `event_type` deviations.
+    4. **Malware Indicators:** Matches the request's `user_agent` signature against a dynamic database of known hacker toolkits (e.g., Nmap, SQLMap, Burp Suite).
+*   **Tech Stack:** FastAPI, PyJWT (for internal auth layer mapping), MongoDB (for tracking usage and API key validation).
+
+### Tool 5: Global Analytics Command Center (Dashboard)
 *   **The Scenario Addressed:** IT Administrators need a bird's-eye view of all cyber threats hitting the organization to allocate security resources effectively.
-*   **How the Solution Works:** As Tools 1, 2, and 3 silently intercept threats and log them to the SQLite database, this interactive React dashboard visualizes the data. It displays live pie charts of "Threat Types" (e.g., 60% Phishing, 40% Deepfake) and line graphs of threat frequency over time, allowing admins to spot coordinated attacks.
-*   **Tech Stack:** React, Tailwind CSS, Recharts (for data visualization), FastAPI (for SQL data aggregation).
+*   **How the Solution Works:** As Tools 1, 2, and 3 silently intercept threats and log them to the database, this interactive React dashboard visualizes the data. It displays Live B2B API Traffic Logs, Phishing Risk Scores, and Deepfake Manipulations, rendering Explainable AI summaries for complex threats. It also provides a Developer Portal for copying integration scripts.
+*   **Tech Stack:** React, Next.js (App Router), Tailwind CSS, FastAPI.
 
 ---
 

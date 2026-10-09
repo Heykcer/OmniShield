@@ -92,9 +92,19 @@ class Meso4(nn.Module):
         return torch.sigmoid(x)
 
 # Initialize global model
-# Note: In production, we would load pre-trained weights: model.load_state_dict(torch.load('meso4.pth'))
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 meso_model = Meso4().to(device)
+
+WEIGHTS_PATH = "meso4.pth"
+if os.path.exists(WEIGHTS_PATH):
+    try:
+        meso_model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=device))
+        print("Successfully loaded pre-trained Meso4 weights from meso4.pth.")
+    except Exception as e:
+        print(f"Error loading meso4.pth: {e}. Proceeding with initialized weights.")
+else:
+    print("Warning: meso4.pth not found in directory. Proceeding with initialized weights for inference.")
+
 meso_model.eval()
 
 def analyze_video_with_cnn(filepath: str, filename: str):
@@ -129,23 +139,11 @@ def analyze_video_with_cnn(filepath: str, filename: str):
             
             # -----------------------------------------------------------------
             # CNN FORWARD PASS
-            # In a real app with trained weights, output = meso_model(tensor_img)
-            # Since we haven't loaded weights, the CNN outputs random noise.
-            # For demonstration, we simulate the CNN confidence score based on filename,
-            # but the tensor operations still execute fully to prove the architecture.
             # -----------------------------------------------------------------
-            _ = meso_model(tensor_img) 
+            output = meso_model(tensor_img) 
+            cnn_score = output.item() # Get the probability score (0 to 1)
             
-            filename_lower = filename.lower()
-            if "fake" in filename_lower or "deep" in filename_lower or "obama" in filename_lower:
-                base_score = 0.85
-            else:
-                base_score = 0.15
-                
-            # Add random jitter to simulate frame-by-frame CNN fluctuations
-            jitter = np.random.normal(0, 0.05)
-            simulated_cnn_output = min(0.99, max(0.01, base_score + jitter))
-            frame_scores.append(simulated_cnn_output)
+            frame_scores.append(cnn_score)
             
             frame_count += 1
             
@@ -196,7 +194,7 @@ async def scan_media(file: UploadFile = File(...)):
         explanation = ""
         if GENAI_API_KEY:
             try:
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                model = genai.GenerativeModel("gemini-pro")
                 artifacts_str = ", ".join(artifacts)
                 prompt = (
                     f"You are a digital forensics expert analyzing a file named '{file.filename}'. "
