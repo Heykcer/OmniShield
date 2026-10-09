@@ -11,7 +11,7 @@ export default function Analytics() {
   useEffect(() => {
     async function fetchMetrics() {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/metrics');
+        const res = await fetch('http://localhost:8000/api/metrics');
         if (!res.ok) throw new Error('Failed to fetch ML metrics from backend');
         const data = await res.json();
         setMetrics(data);

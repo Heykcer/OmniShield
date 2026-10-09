@@ -16,7 +16,7 @@ export default function Profile() {
     }
 
     // Fetch user info
-    fetch('http://127.0.0.1:8000/api/auth/me', {
+    fetch('http://localhost:8000/api/auth/me', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -31,7 +31,7 @@ export default function Profile() {
 
   const fetchApiKeys = async (token) => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/auth/api-keys', {
+      const res = await fetch('http://localhost:8000/api/auth/api-keys', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -47,7 +47,7 @@ export default function Profile() {
     setLoading(true);
     const token = localStorage.getItem('omnishield_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/auth/api-keys', {
+      const res = await fetch('http://localhost:8000/api/auth/api-keys', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -66,7 +66,7 @@ export default function Profile() {
     
     const token = localStorage.getItem('omnishield_token');
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/auth/api-keys/${key}`, {
+      const res = await fetch(`http://localhost:8000/api/auth/api-keys/${key}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
