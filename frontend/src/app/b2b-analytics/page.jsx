@@ -84,7 +84,7 @@ export default function B2BAnalytics() {
                     <Server className="w-7 h-7 text-blue-400" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-extrabold tracking-tight text-white">B2B API Analytics</h1>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-white">Intelligent Threat Detection</h1>
                     <p className="text-slate-400 font-medium mt-1">Monitor telemetry, threat detection rates, and API usage across your integrated platforms.</p>
                 </div>
             </div>
