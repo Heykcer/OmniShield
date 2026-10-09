@@ -30,9 +30,9 @@ class DeepfakeResponse(BaseModel):
     explanation: str
     artifacts_detected: list[str]
 
-# ==========================================
+ 
 # PYTORCH MESONET ARCHITECTURE (Meso4)
-# ==========================================
+ 
 class Meso4(nn.Module):
     """
     Meso-4 Architecture as described in "MesoNet: a Compact Facial Video Forgery Detection Network".

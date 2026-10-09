@@ -8,13 +8,17 @@
         "False Positive Rate": 0.0183,
         "False Negative Rate": 0.0471,
         "ROC-AUC": 0.9961,
+        "PR-AUC": 0.9955,
+        "MCC": 0.9374,
+        "Brier Score": 0.0228,
+        "Log Loss": 0.0766,
         "Confusion Matrix": {
             "TN": 1232,
             "FP": 23,
             "FN": 45,
             "TP": 911
         },
-        "Inference Time (ms/sample)": 0.0109,
+        "Inference Time (ms/sample)": 0.0136,
         "Model Size (MB)": 0.5831
     },
     "LightGBM": {
@@ -26,13 +30,17 @@
         "False Positive Rate": 0.0191,
         "False Negative Rate": 0.045,
         "ROC-AUC": 0.9963,
+        "PR-AUC": 0.9956,
+        "MCC": 0.9383,
+        "Brier Score": 0.0226,
+        "Log Loss": 0.0755,
         "Confusion Matrix": {
             "TN": 1231,
             "FP": 24,
             "FN": 43,
             "TP": 913
         },
-        "Inference Time (ms/sample)": 0.0124,
+        "Inference Time (ms/sample)": 0.0141,
         "Model Size (MB)": 0.6825
     },
     "Random Forest": {
@@ -44,13 +52,39 @@
         "False Positive Rate": 0.0191,
         "False Negative Rate": 0.0513,
         "ROC-AUC": 0.9962,
+        "PR-AUC": 0.9952,
+        "MCC": 0.9328,
+        "Brier Score": 0.026,
+        "Log Loss": 0.0954,
         "Confusion Matrix": {
             "TN": 1231,
             "FP": 24,
             "FN": 49,
             "TP": 907
         },
-        "Inference Time (ms/sample)": 0.0775,
+        "Inference Time (ms/sample)": 0.0641,
         "Model Size (MB)": 14.7202
+    },
+    "Master Ensemble": {
+        "Accuracy": 0.9688,
+        "Precision": 0.9733,
+        "Recall": 0.954,
+        "F1 Score": 0.9635,
+        "Specificity": 0.9801,
+        "False Positive Rate": 0.0199,
+        "False Negative Rate": 0.046,
+        "ROC-AUC": 0.9968,
+        "PR-AUC": 0.996,
+        "MCC": 0.9364,
+        "Brier Score": 0.0237,
+        "Log Loss": 0.0844,
+        "Confusion Matrix": {
+            "TN": 1230,
+            "FP": 25,
+            "FN": 44,
+            "TP": 912
+        },
+        "Inference Time (ms/sample)": 0.1507,
+        "Model Size (MB)": 24.7023
     }
 }

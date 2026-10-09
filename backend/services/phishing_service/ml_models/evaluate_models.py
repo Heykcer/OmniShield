@@ -7,7 +7,8 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
-    confusion_matrix, roc_auc_score
+    confusion_matrix, roc_auc_score, matthews_corrcoef,
+    average_precision_score, brier_score_loss, log_loss
 )
 
 def evaluate_model(model, X_test, y_test, model_name, model_path):
@@ -29,6 +30,10 @@ def evaluate_model(model, X_test, y_test, model_name, model_path):
     fnr = fn / (fn + tp) if (fn + tp) > 0 else 0
     
     roc_auc = roc_auc_score(y_test, y_pred_proba)
+    mcc = matthews_corrcoef(y_test, y_pred)
+    pr_auc = average_precision_score(y_test, y_pred_proba)
+    brier = brier_score_loss(y_test, y_pred_proba)
+    ll = log_loss(y_test, y_pred_proba)
     
     model_size = os.path.getsize(model_path) / (1024 * 1024) # MB
 
@@ -41,6 +46,10 @@ def evaluate_model(model, X_test, y_test, model_name, model_path):
         "False Positive Rate": round(fpr, 4),
         "False Negative Rate": round(fnr, 4),
         "ROC-AUC": round(roc_auc, 4),
+        "PR-AUC": round(pr_auc, 4),
+        "MCC": round(mcc, 4),
+        "Brier Score": round(brier, 4),
+        "Log Loss": round(ll, 4),
         "Confusion Matrix": {"TN": int(tn), "FP": int(fp), "FN": int(fn), "TP": int(tp)},
         "Inference Time (ms/sample)": round(inference_time * 1000, 4),
         "Model Size (MB)": round(model_size, 4)
@@ -67,7 +76,8 @@ def main():
     models = {
         "XGBoost": "phishing_xgb.pkl",
         "LightGBM": "phishing_lgb.pkl",
-        "Random Forest": "phishing_rf.pkl"
+        "Random Forest": "phishing_rf.pkl",
+        "Master Ensemble": "phishing_master.pkl"
     }
 
     for name, filename in models.items():

@@ -180,7 +180,15 @@ async def analyze_telemetry(event: TelemetryEvent, current_user: dict = Depends(
             "risk": min(round(risk_score * 100, 1), 100.0),
             "details": ", ".join(threat_reasons),
             "timestamp": datetime.datetime.utcnow(),
-            "source": "api_key"
+            "source": "api_key",
+            "metadata": {
+                "event_type": event.event_type,
+                "endpoint": event.endpoint,
+                "request_rate": event.request_rate,
+                "payload_size": event.payload_size,
+                "user_agent": event.user_agent,
+                "user_id": event.user_id
+            }
         }
         await threat_logs_collection.insert_one(log_entry)
         
@@ -462,7 +470,8 @@ async def get_b2b_stats(current_user: dict = Depends(get_current_user)):
             "target": log.get("target", "Unknown"),
             "status": log.get("status", "Safe"),
             "risk": log.get("risk", 0.0),
-            "details": log.get("details", "Phishing Link Detected" if "URL" in log.get("tool", "") or "B2B Scan" in log.get("tool", "") else "")
+            "details": log.get("details", "Phishing Link Detected" if "URL" in log.get("tool", "") or "B2B Scan" in log.get("tool", "") else ""),
+            "metadata": log.get("metadata", None)
         })
 
     return {

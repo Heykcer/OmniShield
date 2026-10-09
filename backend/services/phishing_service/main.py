@@ -29,6 +29,12 @@ except Exception as e:
     print(f"Warning: Random Forest model not found. {e}")
     rf_model = None
 
+try:
+    master_model = joblib.load(os.path.join(MODEL_DIR, 'phishing_master.pkl'))
+except Exception as e:
+    print(f"Warning: Master Ensemble model not found. {e}")
+    master_model = None
+
 # Configure Gemini API for Explainable AI (XAI)
 GENAI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 if GENAI_API_KEY:
@@ -47,7 +53,7 @@ app.add_middleware(
 
 class PhishingRequest(BaseModel):
     url: str
-    model: str = "xgboost"
+    model: str = "master"
 
 class PhishingResponse(BaseModel):
     url: str
@@ -65,7 +71,13 @@ async def check_phishing(req: PhishingRequest):
     features_df = extract_uci_features(req.url)
     
     # 2. Predict Probability
-    if req.model == 'lightgbm':
+    if req.model == 'master':
+        if master_model is None:
+            raise HTTPException(status_code=500, detail="Master Ensemble model not loaded on server.")
+        probabilities = master_model.predict_proba(features_df)[0]
+        risk_score = float(probabilities[1])
+        model_name = "Master Hybrid Ensemble"
+    elif req.model == 'lightgbm':
         if lgb_model is None:
             raise HTTPException(status_code=500, detail="LightGBM model not loaded on server.")
         probabilities = lgb_model.predict_proba(features_df)[0]
@@ -86,12 +98,15 @@ async def check_phishing(req: PhishingRequest):
 
     # Identify specific risk factors from the extracted features
     risk_factors = []
-    if features_df['URL_Length'].iloc[0] == -1:
-        risk_factors.append("Excessive URL length")
+    if features_df['Abnormal_URL'].iloc[0] == -1:
+        risk_factors.append("High-risk brand impersonation detected (spoofed company credentials)")
+        risk_score = max(risk_score, 0.95)
     if features_df['having_IP_Address'].iloc[0] == -1:
         risk_factors.append("Domain is an IP address instead of a standard name")
+        risk_score = max(risk_score, 0.90)
     if features_df['Shortining_Service'].iloc[0] == -1:
         risk_factors.append("Uses a known URL shortening service to hide true destination")
+        risk_score = max(risk_score, 0.75)
     if features_df['having_At_Symbol'].iloc[0] == -1:
         risk_factors.append("Contains '@' symbol (often used to trick browsers into hiding the true domain)")
     if features_df['double_slash_redirecting'].iloc[0] == -1:
@@ -101,7 +116,13 @@ async def check_phishing(req: PhishingRequest):
     if features_df['having_Sub_Domain'].iloc[0] == -1:
         risk_factors.append("Multiple subdomains detected (common in phishing to mimic real brands)")
     if features_df['SSLfinal_State'].iloc[0] == -1:
-        risk_factors.append("Does not use secure HTTPS protocol")
+        risk_factors.append("Does not use secure HTTPS protocol or has untrusted/spoofed certificate")
+    if features_df['HTTPS_token'].iloc[0] == -1:
+        risk_factors.append("Misleading 'https' token positioned inside domain name")
+    if features_df['Redirect'].iloc[0] == -1:
+        risk_factors.append("Contains open redirection parameters")
+    if features_df['URL_Length'].iloc[0] == -1:
+        risk_factors.append("Excessive URL length")
     if features_df['DNSRecord'].iloc[0] == -1:
         risk_factors.append("Domain is not registered or currently offline (No DNS Record)")
         risk_score = max(risk_score, 0.85)
@@ -119,7 +140,7 @@ async def check_phishing(req: PhishingRequest):
     explanation = ""
     if GENAI_API_KEY:
         try:
-            model = genai.GenerativeModel("gemini-pro")
+            model = genai.GenerativeModel("gemini-1.5-flash")
             prompt = (
                 f"You are a cybersecurity expert. Our {model_name} model analyzed this URL: {req.url} "
                 f"and gave it a phishing risk score of {risk_score*100:.1f}%. "
@@ -128,8 +149,13 @@ async def check_phishing(req: PhishingRequest):
             )
             response = model.generate_content(prompt)
             explanation = response.text.strip()
-        except Exception as e:
-            explanation = f"**Prediction:** {'PHISHING' if is_phishing else 'LEGITIMATE'}\n\n**Risk Score:** {risk_score*100:.1f}%\n\n**Major Risk Factors:**\n{risk_list_str}"
+        except Exception:
+            try:
+                model = genai.GenerativeModel("gemini-pro")
+                response = model.generate_content(prompt)
+                explanation = response.text.strip()
+            except Exception:
+                explanation = f"**Prediction:** {'PHISHING' if is_phishing else 'LEGITIMATE'}\n\n**Risk Score:** {risk_score*100:.1f}%\n\n**Major Risk Factors:**\n{risk_list_str}"
     else:
         explanation = f"**Prediction:** {'PHISHING' if is_phishing else 'LEGITIMATE'}\n\n**Risk Score:** {risk_score*100:.1f}%\n\n**Major Risk Factors:**\n{risk_list_str}"
         

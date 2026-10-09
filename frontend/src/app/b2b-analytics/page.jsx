@@ -159,6 +159,7 @@ export default function B2BAnalytics() {
                                     <th className="py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Timestamp</th>
                                     <th className="py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Target Analyzed</th>
                                     <th className="py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Threat Intel Details</th>
+                                    <th className="py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Context (Metadata)</th>
                                     <th className="py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Status</th>
                                     <th className="py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Risk Score</th>
                                 </tr>
@@ -174,6 +175,17 @@ export default function B2BAnalytics() {
                                         </td>
                                         <td className="py-4 px-4 text-sm font-bold text-indigo-300">
                                             {log.details || "N/A"}
+                                        </td>
+                                        <td className="py-4 px-4 text-xs font-mono text-slate-400">
+                                            {log.metadata ? (
+                                                <div className="flex flex-col gap-1">
+                                                    <span>Req Rate: <span className="text-white">{log.metadata.request_rate}</span>/m</span>
+                                                    <span>Payload: <span className="text-white">{(log.metadata.payload_size / 1024 / 1024).toFixed(2)}</span>MB</span>
+                                                    <span>Endpoint: <span className="text-white">{log.metadata.endpoint}</span></span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-slate-600">No telemetry metadata</span>
+                                            )}
                                         </td>
                                         <td className="py-4 px-4">
                                             {log.status === 'Safe' ? (
