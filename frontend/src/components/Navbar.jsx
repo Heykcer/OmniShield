@@ -35,9 +35,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Analytics', path: '/analytics' },
-    { name: 'B2B API', path: '/b2b-analytics' },
-    { name: 'API Docs', path: '/developers' },
+    { name: 'Analytics', path: '/b2b-analytics' },
     { name: 'Reports', path: '/reports' },
     { name: 'Services', path: '/services' },
     { name: 'Pricing', path: '/pricing' }
@@ -76,9 +74,6 @@ export default function Navbar() {
           ) : (
             <Link href="/login" className="text-sm font-bold text-slate-600 hover:text-slate-900">Sign In</Link>
           )}
-          <Link href="/dashboard" className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-transform active:scale-95 shadow-sm">
-            Scan URL
-          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -111,9 +106,6 @@ export default function Navbar() {
           ) : (
             <Link href="/login" onClick={() => setIsOpen(false)} className="text-base font-bold text-slate-700">Sign In</Link>
           )}
-          <Link href="/dashboard" onClick={() => setIsOpen(false)} className="py-3 bg-blue-600 text-white text-center rounded-lg text-base font-bold shadow-sm">
-            Scan URL
-          </Link>
         </div>
       )}
     </nav>

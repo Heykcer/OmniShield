@@ -22,7 +22,8 @@ export default function Footer() {
           <ul className="space-y-3">
             <li><Link href="/services" className="text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">Phishing Detection</Link></li>
             <li><Link href="#" className="text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">Deepfake Forensics</Link></li>
-            <li><Link href="#" className="text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">API Access</Link></li>
+            <li><Link href="/developers" className="text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">API Docs</Link></li>
+            <li><Link href="/analytics" className="text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">Model Analytic</Link></li>
             <li><Link href="/pricing" className="text-slate-500 hover:text-blue-600 font-medium text-sm transition-colors">Pricing</Link></li>
           </ul>
         </div>
