@@ -17,7 +17,7 @@ export default function B2BAnalytics() {
 
     async function fetchStats() {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/b2b-stats', {
+        const res = await fetch('http://localhost:8000/api/b2b-stats', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) throw new Error('Failed to fetch B2B metrics');
@@ -36,7 +36,7 @@ export default function B2BAnalytics() {
     // 1. Fetch user's active API keys to get a key to test with
     const token = localStorage.getItem('omnishield_token');
     try {
-        const keyRes = await fetch('http://127.0.0.1:8000/api/auth/api-keys', {
+        const keyRes = await fetch('http://localhost:8000/api/auth/api-keys', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const keyData = await keyRes.json();
@@ -49,7 +49,7 @@ export default function B2BAnalytics() {
         const apiKey = keyData.keys[0].api_key;
         
         // 2. Simulate the external website sending a telemetry payload
-        await fetch('http://127.0.0.1:8000/api/external/v1/telemetry', {
+        await fetch('http://localhost:8000/api/external/v1/telemetry', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

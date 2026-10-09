@@ -16,7 +16,7 @@ export default function Reports() {
     const token = localStorage.getItem('omnishield_token');
     if (!token) return;
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/reports', {
+      const res = await fetch('http://localhost:8000/api/reports', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -32,7 +32,7 @@ export default function Reports() {
     if (!token) return;
     setGenerating(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/reports/generate', {
+      const res = await fetch('http://localhost:8000/api/reports/generate', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

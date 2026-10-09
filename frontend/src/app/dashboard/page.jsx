@@ -34,7 +34,7 @@ export default function Dashboard() {
     }
     
     // Verify token is valid
-    fetch('http://127.0.0.1:8000/api/auth/me', {
+    fetch('http://localhost:8000/api/auth/me', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => {
@@ -54,7 +54,7 @@ export default function Dashboard() {
 
   const fetchThreatLogs = async (token) => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/threats', {
+      const res = await fetch('http://localhost:8000/api/threats', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -68,7 +68,7 @@ export default function Dashboard() {
 
   const fetchStats = async (token) => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/stats', {
+      const res = await fetch('http://localhost:8000/api/stats', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -91,7 +91,7 @@ export default function Dashboard() {
     const token = localStorage.getItem('omnishield_token');
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/phishing', {
+      const res = await fetch('http://localhost:8000/api/phishing', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default function Dashboard() {
     formData.append('file', dfFile);
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/deepfake', {
+      const res = await fetch('http://localhost:8000/api/deepfake', {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`
