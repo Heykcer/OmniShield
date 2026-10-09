@@ -11,8 +11,10 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - PHISHING_SERVICE_URL=http://phishing_service:8001
+      - DEEPFAKE_SERVICE_URL=http://deepfake_service:8002
     depends_on:
       - phishing_service
+      - deepfake_service
     env_file:
       - .env
 
@@ -21,6 +23,16 @@ services:
     container_name: omnishield_phishing_service
     ports:
       - "8001:8001"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    env_file:
+      - .env
+
+  deepfake_service:
+    build: ./services/deepfake_service
+    container_name: omnishield_deepfake_service
+    ports:
+      - "8002:8002"
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
     env_file:

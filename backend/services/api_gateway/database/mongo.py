@@ -13,6 +13,7 @@ db = client.omnishield
 # Export collections for easy access in routes
 users_collection = db.users
 threat_logs_collection = db.threat_logs
+reports_collection = db.reports
 
 async def init_db():
     """
@@ -24,4 +25,4 @@ async def init_db():
     
     # Indexes for querying threat logs
     await threat_logs_collection.create_index("user_id")
-    await threat_logs_collection.create_index("timestamp", direction=-1)
+    await threat_logs_collection.create_index([("timestamp", -1)])

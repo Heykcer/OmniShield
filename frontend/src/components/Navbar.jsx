@@ -1,16 +1,26 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Menu, X } from 'lucide-react';
+import { ShieldCheck, Menu, X, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    // Check if user is logged in by looking for the JWT
+    const token = localStorage.getItem('omnishield_token');
+    setIsLoggedIn(!!token);
+  }, [pathname]);
 
   // Keep the navbar ultra-minimal on the login page
-  if (pathname === '/login') {
+  if (mounted && pathname === '/login') {
     return (
       <nav className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-center sticky top-0 z-50">
          <Link href="/" className="flex items-center gap-2">
@@ -28,8 +38,7 @@ export default function Navbar() {
     { name: 'Analytics', path: '/analytics' },
     { name: 'Reports', path: '/reports' },
     { name: 'Services', path: '/services' },
-    { name: 'Pricing', path: '/pricing' },
-    { name: 'Profile', path: '/profile' }
+    { name: 'Pricing', path: '/pricing' }
   ];
 
   return (
@@ -58,7 +67,13 @@ export default function Navbar() {
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/login" className="text-sm font-bold text-slate-600 hover:text-slate-900">Sign In</Link>
+          {isLoggedIn ? (
+            <Link href="/profile" className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+              <User className="w-5 h-5" />
+            </Link>
+          ) : (
+            <Link href="/login" className="text-sm font-bold text-slate-600 hover:text-slate-900">Sign In</Link>
+          )}
           <Link href="/dashboard" className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-transform active:scale-95 shadow-sm">
             Scan URL
           </Link>
@@ -87,7 +102,13 @@ export default function Navbar() {
             </Link>
           ))}
           <hr className="border-slate-100" />
-          <Link href="/login" onClick={() => setIsOpen(false)} className="text-base font-bold text-slate-700">Sign In</Link>
+          {isLoggedIn ? (
+            <Link href="/profile" onClick={() => setIsOpen(false)} className="text-base font-bold text-slate-700 flex items-center gap-2">
+              <User className="w-5 h-5" /> Profile
+            </Link>
+          ) : (
+            <Link href="/login" onClick={() => setIsOpen(false)} className="text-base font-bold text-slate-700">Sign In</Link>
+          )}
           <Link href="/dashboard" onClick={() => setIsOpen(false)} className="py-3 bg-blue-600 text-white text-center rounded-lg text-base font-bold shadow-sm">
             Scan URL
           </Link>

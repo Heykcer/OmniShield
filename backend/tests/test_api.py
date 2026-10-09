@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from fastapi.testclient import TestClient
 
-from app.main import app
+from backend.services.api_gateway.main import app
 
 client = TestClient(app)
 
